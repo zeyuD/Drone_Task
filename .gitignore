@@ -1,0 +1,7 @@
+# Dependencies from other projects
+aruco_markers/
+
+# Test files
+aruco.mp4
+aruco_detected.avi
+path_planning_result.png
