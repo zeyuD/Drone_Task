@@ -23,8 +23,10 @@ This repo is about the drone project.
 
 ## Tips 
 
+Note: PX4-Autopilot, px4_msgs, and px4-ros2-interface-lib must be ver 1.16
 
-### Environment pre-requests
+
+## Environment pre-requests
 
 Install PX4-Autopilot
 
@@ -76,4 +78,17 @@ Set the OpenCV_DIR environment variable
 
 ```bash
 export OpenCV_DIR=~/opencv/build
+```
+
+## Build in ROS2 workspace
+
+```bash
+cd drone_ws
+mkdir src
+cd src
+git clone https://github.com/PX4/px4_msgs.git
+git clone https://github.com/Auterion/px4-ros2-interface-lib.git
+cd ../
+colcon build
+source install/setup.bash
 ```
