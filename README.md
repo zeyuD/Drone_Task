@@ -24,18 +24,24 @@ This repo is about the drone project.
 ## Tips 
 
 
-### Example 1
+### Environment pre-requests
 
-Example 1-1
+Install PX4-Autopilot
+
 ```bash
-cd /
+git clone https://github.com/PX4/PX4-Autopilot.git --recursive
+bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
 ```
 
+Install Micro-XRCE-DDS-Agent
 
-
-### Example 2
-
-Example 2-1
 ```bash
-cd /
+git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git
+cd Micro-XRCE-DDS-Agent
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+sudo ldconfig /usr/local/lib/
 ```
