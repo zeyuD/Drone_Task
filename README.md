@@ -70,4 +70,5 @@ cd build
 cmake -D CMAKE_BUILD_TYPE=Release -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ..
 make
 sudo make install
+export OpenCV_DIR=~/opencv/build
 ```
