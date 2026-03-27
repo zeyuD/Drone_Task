@@ -12,11 +12,11 @@ class ImageMetadataSubscriber(Node):
         # Subscribe to the camera topic
         self.subscription = self.create_subscription(
             Image,
-            '/Camera_Node/image_raw',
+            '/image_raw',
             self.listener_callback,
             10) # History depth
         
-        self.get_logger().info('Monitoring metadata on /Camera_Node/image_raw...')
+        self.get_logger().info('Monitoring metadata on /image_raw...')
 
     def listener_callback(self, msg):
         # Extract and print metadata fields

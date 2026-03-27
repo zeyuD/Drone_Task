@@ -15,7 +15,7 @@ class CameraNode(Node):
         super().__init__('Camera_Node')
         
         # Create publisher for camera frames
-        self.publisher_ = self.create_publisher(Image, 'Camera_Node/image_raw', 10)
+        self.publisher_ = self.create_publisher(Image, 'image_raw', 10)
         
         # Initialize CV Bridge for converting OpenCV images to ROS Image messages
         self.bridge = CvBridge()
@@ -36,7 +36,7 @@ class CameraNode(Node):
         timer_period = 1.0 / 30.0  # 30 FPS
         self.timer = self.create_timer(timer_period, self.timer_callback)
         
-        self.get_logger().info('Camera Node initialized and broadcasting on /Camera_Node/image_raw')
+        self.get_logger().info('Camera Node initialized and broadcasting on /image_raw')
 
     def timer_callback(self):
         """Capture frame from camera and publish it."""
