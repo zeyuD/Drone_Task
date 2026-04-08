@@ -8,13 +8,15 @@ This repo is about the drone project.
 
 ## Current Progress
 ### 
+- Integrate Camera Node and Aruco Detection Node to work together in ROS2.
 - Generate a random maze grid and plan path using A* algorithm.
 - Use ArUco Python package to detect markers with ID in a video.
 
 
 ## Arranged To Do List
-- Realtime detection using webcam.
-- Detect orientation and distance.
+- Integrate Object Detection Node to detect objects in the environment using a pre-trained model.
+- Integrate Mapping Node to create a map of the environment using sensor data.
+- Integrate Path Planning Node to plan a path from the current location to a target location using the generated maze grid.
 
 
 ## To Be Implemented
