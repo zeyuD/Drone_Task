@@ -8,16 +8,17 @@ class ImageMetadataSubscriber(Node):
     def __init__(self):
         super().__init__('image_metadata_subscriber')
         self.bridge = CvBridge()
+        self.topic_name = '/image_raw'
         
         # Subscribe to the camera topic
         self.subscription = self.create_subscription(
             Image,
-            '/image_raw',
+            self.topic_name,
             self.listener_callback,
             10) # History depth
         
-        self.get_logger().info('Monitoring metadata on /image_raw...')
-        
+        self.get_logger().info(f'Monitoring metadata on {self.topic_name}...')
+
         self.last_msg_time = self.get_clock().now()
         # Check every 5 seconds
         self.timer = self.create_timer(5.0, self.check_callback)
@@ -40,7 +41,7 @@ class ImageMetadataSubscriber(Node):
     def check_callback(self):
         # Warn if no message received in 5 seconds
         if (self.get_clock().now() - self.last_msg_time).nanoseconds > 5e9:
-            self.get_logger().warn('No messages received on topic: /image_raw')
+            self.get_logger().warn(f'No messages received on topic: {self.topic_name}')
 
 def main(args=None):
     rclpy.init(args=args)
