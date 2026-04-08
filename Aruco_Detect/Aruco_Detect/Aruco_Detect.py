@@ -16,7 +16,7 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import String
 
 
-class ArucoDetect(Node):
+class ArucoNode(Node):
     def __init__(self):
         super().__init__('Aruco_Detect')
         
@@ -42,24 +42,20 @@ class ArucoDetect(Node):
             10) # History depth
         self.publisher_ = self.create_publisher(String, self.output_topic_name, 10)
         
-        # Create timer to capture and publish frames at 30 Hz
-        timer_period = 1.0 / 30.0  # 30 FPS
-        self.timer = self.create_timer(timer_period, self.listener_callback)
-        
         self.get_logger().info(f'Monitoring metadata on {self.input_topic_name}...')
 
-    def listener_callback(self, msg):
+    def listener_callback(self, camera_msg):
         # Extract and print metadata fields
         # # Note: 'seq' is no longer a part of the Header in ROS 2.
         # self.get_logger().info('--- New Frame Metadata ---')
-        # self.get_logger().info(f"Frame ID: {msg.header.frame_id}")
-        # self.get_logger().info(f"Timestamp: {msg.header.stamp.sec}.{msg.header.stamp.nanosec}")
-        # self.get_logger().info(f"Resolution: {msg.width}x{msg.height}")
-        # self.get_logger().info(f"Encoding: {msg.encoding}")
-        # self.get_logger().info(f"Step (row length in bytes): {msg.step}")
-        # self.get_logger().info(f"Is Bigendian: {bool(msg.is_bigendian)}")
+        # self.get_logger().info(f"Frame ID: {camera_msg.header.frame_id}")
+        # self.get_logger().info(f"Timestamp: {camera_msg.header.stamp.sec}.{camera_msg.header.stamp.nanosec}")
+        # self.get_logger().info(f"Resolution: {camera_msg.width}x{camera_msg.height}")
+        # self.get_logger().info(f"Encoding: {camera_msg.encoding}")
+        # self.get_logger().info(f"Step (row length in bytes): {camera_msg.step}")
+        # self.get_logger().info(f"Is Bigendian: {bool(camera_msg.is_bigendian)}")
         # self.get_logger().info('--------------------------')
-        received_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        received_image = self.bridge.imgmsg_to_cv2(camera_msg, desired_encoding='bgr8')
         # Undistort the image using the camera matrix and distortion coefficients
         h, w = received_image.shape[:2]
         new_mtx = cv2.getOptimalNewCameraMatrix(self.mtx, self.dist, (w,h), 1, (w,h))[0]
@@ -98,6 +94,13 @@ class ArucoDetect(Node):
             annotated_image = aruco.drawDetectedMarkers(undistorted_image.copy(), corners_list, ids)
         else:
             annotated_image = undistorted_image
+
+        # Publish detections as JSON string
+        aruco_msg = String()
+        aruco_msg.data = json.dumps(detections)
+        self.publisher_.publish(aruco_msg)
+        self.get_logger().debug("Published ArUco detections")
+
         print(json.dumps(detections, indent=2))
         # Open a window to display the image (optional)
         cv2.imshow('Camera Frame', annotated_image)
@@ -109,11 +112,11 @@ class ArucoDetect(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    aruco_detect = ArucoDetect()
+    aruco_node = ArucoNode()
     try:
-        rclpy.spin(aruco_detect)
+        rclpy.spin(aruco_node)
     except KeyboardInterrupt:
         pass
     finally:
-        aruco_detect.destroy_node()
+        aruco_node.destroy_node()
         rclpy.shutdown()

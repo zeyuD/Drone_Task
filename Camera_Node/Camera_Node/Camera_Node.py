@@ -47,10 +47,10 @@ class CameraNode(Node):
             return
         
         # Convert OpenCV image to ROS Image message
-        ros_image = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
+        camera_msg = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
         
         # Publish the image
-        self.publisher_.publish(ros_image)
+        self.publisher_.publish(camera_msg)
         self.get_logger().debug("Published frame")
 
     def destroy_node(self):
