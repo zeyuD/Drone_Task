@@ -17,6 +17,10 @@ class ImageMetadataSubscriber(Node):
             10) # History depth
         
         self.get_logger().info('Monitoring metadata on /image_raw...')
+        
+        self.last_msg_time = self.get_clock().now()
+        # Check every 5 seconds
+        self.timer = self.create_timer(5.0, self.check_callback)
 
     def listener_callback(self, msg):
         # Extract and print metadata fields
@@ -33,10 +37,14 @@ class ImageMetadataSubscriber(Node):
         cv2.imshow('Camera Frame', self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8'))
         cv2.waitKey(1)  # Display the image for 1 ms    
 
+    def check_callback(self):
+        # Warn if no message received in 5 seconds
+        if (self.get_clock().now() - self.last_msg_time).nanoseconds > 5e9:
+            self.get_logger().warn('No messages received on topic: /image_raw')
+
 def main(args=None):
     rclpy.init(args=args)
     image_subscriber = ImageMetadataSubscriber()
-    
     try:
         rclpy.spin(image_subscriber)
     except KeyboardInterrupt:
