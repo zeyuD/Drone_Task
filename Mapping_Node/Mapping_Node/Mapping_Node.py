@@ -23,17 +23,17 @@ class MappingNode(Node):
             inflation_meters=0.0
         )
         self.map_pub = self.create_publisher(OccupancyGrid, 'map', 10)
-        self.obstacles_sub = self.create_subscription(PoseArray, 'obstacles', self.obstacles_callback, 10)
+        self.obstacles_sub = self.create_subscription(PoseArray, 'object_detections', self.obstacles_callback, 10)
         self.publish_timer = self.create_timer(0.2, self.publish_map)
         self._has_obstacles = False
 
         self.get_logger().info(
-            'Mapping Node initialized: subscribing to /obstacles, publishing /map'
+            'Mapping Node initialized: subscribing to /object_detections, publishing /map'
         )
 
     def obstacles_callback(self, msg):
         """
-        Receives obstacle points from /obstacles as PoseArray.
+        Receives obstacle points from /object_detections as PoseArray.
         Mapping convention: x/y from pose.position, optional radius in pose.position.z.
         """
         obstacles = []
