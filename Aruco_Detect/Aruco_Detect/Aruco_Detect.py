@@ -44,6 +44,22 @@ class ArucoNode(Node):
         
         self.get_logger().info(f'Monitoring metadata on {self.input_topic_name}...')
 
+    def get_2d_angle(corners_array):
+        # corner_array is the array of its 4 pixel points
+        pts = corners_array
+        
+        # Calculate the vector from Top-Left (0) to Top-Right (1)
+        dx = pts[1][0] - pts[0][0]
+        dy = pts[1][1] - pts[0][1]
+        
+        # Calculate angle in radians and convert to degrees
+        # dy is usually inverted in image coords (y increases downward)
+        angle_rad = np.arctan2(dy, dx)
+        angle_deg = np.degrees(angle_rad)
+        
+        return angle_deg
+        
+
     def listener_callback(self, camera_msg):
         # Extract and print metadata fields
         # # Note: 'seq' is no longer a part of the Header in ROS 2.
@@ -73,6 +89,7 @@ class ArucoNode(Node):
 
             for i, corners in enumerate(corners_list):
                 c = corners[0]
+                angles = self.get_2d_angle(c)
                 center = c.mean(axis=0)
                 cx, cy = center
 
@@ -82,12 +99,13 @@ class ArucoNode(Node):
                 # Estimate distance based on marker size (assuming a known marker size and camera parameters)
                 # This is a very rough estimation and should be calibrated for real applications
                 distance = (self.marker_length * self.focal_length) / (corners[0][1][0] - corners[0][0][0])  # Using width of the marker in pixels
-   
+
                 detections.append({
                     "id": int(ids[i][0]),
                     "center": [float(cx), float(cy)],
                     "offset_norm": [float(dx), float(dy)],
-                    "distance": float(distance)
+                    "distance": float(distance),
+                    "angle": float(angles)
                 })
 
         if detections:
