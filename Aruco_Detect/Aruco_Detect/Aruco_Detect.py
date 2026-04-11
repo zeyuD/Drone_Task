@@ -44,7 +44,7 @@ class ArucoNode(Node):
         
         self.get_logger().info(f'Monitoring metadata on {self.input_topic_name}...')
 
-    def get_2d_angle(corners_array):
+    def get_2d_angle(self, corners_array):
         # corner_array is the array of its 4 pixel points
         pts = corners_array
         
