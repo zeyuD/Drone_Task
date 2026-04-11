@@ -21,6 +21,7 @@ class ObjectDetectionNode(Node):
         self.input_topic_name = '/image_raw'
         self.output_topic_name = '/object_detections'
         self.confidence_threshold = 0.4
+        self.object_width_m = 0.5  # Average object width in meters (adjust as needed)
 
         # Camera Calibration settings (example values, adjust as needed)
         self.mtx = np.array([[444.88364382, 0, 316.76067727], [0, 447.22855927, 236.99517483], [0, 0, 1]])  # Camera matrix (example)
@@ -51,6 +52,32 @@ class ObjectDetectionNode(Node):
         annotated_image = results[0].plot()
 
         detections = []
+
+        for result in results:
+            for box in result.boxes:
+                x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
+                conf = box.conf[0].cpu().numpy()
+                cls = int(box.cls[0].cpu().numpy())
+                label = self.model.names[cls]
+
+                # Calculate distance using pinhole camera model
+                bbox_width_pixels = x2 - x1
+                if bbox_width_pixels > 0:
+                    distance_m = (self.focal_length * self.object_width_m) / bbox_width_pixels
+                else:
+                    distance_m = float('inf')  # Avoid division by zero
+
+                detections.append({
+                    'label': label,
+                    'confidence': float(conf),
+                    'bounding_box': {
+                        'x1': float(x1),
+                        'y1': float(y1),
+                        'x2': float(x2),
+                        'y2': float(y2)
+                    },
+                    'distance_m': distance_m
+                })
 
         # Publish detections as JSON string
         obj_msg = String()
