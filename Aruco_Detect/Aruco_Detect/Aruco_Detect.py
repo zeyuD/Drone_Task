@@ -109,7 +109,13 @@ class ArucoNode(Node):
                 })
 
         if detections:
+            # annotated_image = aruco.drawDetectedMarkers(undistorted_image.copy(), corners_list, ids)
+            # Add overlay of ID, distance, and angle for each detected marker
             annotated_image = aruco.drawDetectedMarkers(undistorted_image.copy(), corners_list, ids)
+            for det in detections:
+                c = det["center"]
+                text = f"ID:{det['id']} Dist:{det['distance']:.2f}m Angle:{det['angle']:.1f}deg"
+                cv2.putText(annotated_image, text, (int(c[0]), int(c[1])), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
         else:
             annotated_image = undistorted_image
 
