@@ -23,7 +23,7 @@ class ImageMetadataSubscriber(Node):
         self.imgpoints = [] # 2d points in image plane
 
         # Subscribe to the camera topic
-        self.subscription = self.create_subscription(s
+        self.subscription = self.create_subscription(
             Image,
             self.topic_name,
             self.listener_callback,
