@@ -98,7 +98,7 @@ class ArucoNode(Node):
 
                 # Estimate distance based on marker size (assuming a known marker size and camera parameters)
                 # This is a very rough estimation and should be calibrated for real applications
-                distance = (self.marker_length * self.focal_length) / (corners[0][1][0] - corners[0][0][0])  # Using width of the marker in pixels
+                distance = (self.marker_length * self.focal_length) / abs(corners[0][1][0] - corners[0][0][0])  # Using width of the marker in pixels
 
                 detections.append({
                     "id": int(ids[i][0]),
